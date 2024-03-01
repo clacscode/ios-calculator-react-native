@@ -1,12 +1,22 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react';
+
+enum Operator {
+  add,
+  substrac,
+  multiply,
+  divide
+}
 
 export const useCalculator = () => {
 
   const [number, setNumber] = useState('0');
+  const [prevNumber, setPrevNumber] = useState('0');
 
+  const lastOperation = useRef<Operator>();
 
   const clean = () => {
     setNumber('0');
+    setPrevNumber('0');
   }
 
   // Funcion delete (del)
@@ -58,14 +68,75 @@ export const useCalculator = () => {
 
   }
 
+  const setLastNumber = () => {
+    if (number.startsWith('.')) {
+      setPrevNumber(number.slice(0, -1));
+    } else {
+      setPrevNumber(number);
+    }
+
+    setNumber('0');
+  }
+
+  const divideOperation = () => {
+    setLastNumber();
+    lastOperation.current = Operator.divide;
+  }
+
+  const multiplyOperation = () => {
+    setLastNumber();
+    lastOperation.current = Operator.multiply;
+  }
+
+  const substractOperation = () => {
+    setLastNumber();
+    lastOperation.current = Operator.substrac;
+  }
+
+  const addOperation = () => {
+    setLastNumber();
+    lastOperation.current = Operator.add;
+  }
+
+  const calculateResult = () => {
+    const num1 = Number(prevNumber);
+    const num2 = Number(number);
+
+
+    switch (lastOperation.current) {
+      case Operator.add:
+        setNumber(`${num1 + num2}`);
+        break;
+      case Operator.substrac:
+        setNumber(`${num1 - num2}`);
+        break;
+      case Operator.multiply:
+        setNumber(`${num1 * num2}`);
+        break;
+      case Operator.divide:
+        setNumber(`${num1 / num2}`);
+        break;
+      default:
+        throw new Error('Operation not implemented');
+    }
+
+    setPrevNumber('0')
+  }
+
   return {
     // Properties
     number,
+    prevNumber,
 
     // Methods
     buildNumber,
     toggleSign,
     clean,
-    deleteOperation
+    deleteOperation,
+    divideOperation,
+    multiplyOperation,
+    substractOperation,
+    addOperation,
+    calculateResult
   }
 }
