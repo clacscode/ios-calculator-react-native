@@ -1,11 +1,11 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { colors, styles } from '../../config/theme/app-theme';
 import { CalculatorButtons } from '../components/CalculatorButtons';
 import { useCalculator } from '../hooks/useCalculator';
 
 export const CalculatorScreen = () => {
 
-  const { number, prevNumber, buildNumber, toggleSign, clean, deleteOperation,
+  const { formula, number, prevNumber, buildNumber, toggleSign, clean, deleteOperation,
     divideOperation, multiplyOperation, substractOperation, addOperation, calculateResult } = useCalculator();
 
   return (
@@ -15,15 +15,21 @@ export const CalculatorScreen = () => {
         <Text
           adjustsFontSizeToFit
           numberOfLines={1}
-          style={styles.mainResult}>{number}
+          style={styles.mainResult}>{formula}
         </Text>
 
-        <Text
-          adjustsFontSizeToFit
-          numberOfLines={1}
-          style={styles.subResult}>
-          {(prevNumber === '0' ? ' ' : prevNumber)}
-        </Text>
+        {
+          (formula === prevNumber)
+            ? <Text style={styles.subResult}> </Text>
+            : (
+              <Text
+                adjustsFontSizeToFit
+                numberOfLines={1}
+                style={styles.subResult}>
+                {prevNumber}
+              </Text>
+            )
+        }
       </View>
 
       <View style={styles.row}>
